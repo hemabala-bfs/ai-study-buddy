@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Buddy – Intelligent Learning Assistant</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">🎓</span>
+                <span class="brand-name">AI Study Buddy</span>
+                <span class="brand-badge">Gemini Powered</span>
+            </div>
+            <ul class="nav-links">
+                <li><button class="nav-btn active" data-tab="explainer">💡 Concept Explainer</button></li>
+                <li><button class="nav-btn" data-tab="notes">📝 Notes Generator</button></li>
+                <li><button class="nav-btn" data-tab="quiz">🎯 AI Quiz</button></li>
+                <li><button class="nav-btn" data-tab="coding">💻 Coding Assistant</button></li>
+            </ul>
+            <div class="api-status-pill" id="apiStatusPill">
+                <span class="status-dot"></span>
+                <span class="status-text">Checking API...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="app-container">
+        <!-- Hero Section -->
+        <header class="hero-banner">
+            <h1>Learn Faster. Understand Deeper.</h1>
+            <p>Your 24/7 intelligent academic mentor for concepts, revision notes, interactive quizzes, and coding assistance.</p>
+        </header>
+
+        <!-- API Key Notification Banner (Hidden by default, shown if missing) -->
+        <div id="apiKeyBanner" class="alert-banner warning-banner" style="display: none;">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                <strong>Gemini API Key Needed:</strong> To unlock real-time AI responses, create a <code>.env</code> file from <code>.env.example</code> with your free Gemini key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+            </div>
+        </div>
+
+        <!-- TAB 1: Concept Explainer -->
+        <section id="tab-explainer" class="tab-panel active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <span class="panel-icon">💡</span>
+                        <div>
+                            <h2>AI Concept Explainer</h2>
+                            <p class="subtitle">Get clear, jargon-free explanations with real-world analogies and key takeaways.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label for="explainTopic" class="input-label">Enter any topic or concept:</label>
+                    <div class="input-group">
+                        <input type="text" id="explainTopic" placeholder="e.g. Backpropagation, Photosynthesis, Bayes Theorem, REST APIs..." />
+                        <button id="explainBtn" class="btn btn-primary">
+                            <span class="btn-text">Explain Concept</span>
+                            <span class="spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                    <!-- Suggestions tags -->
+                    <div class="quick-tags">
+                        <span class="tag-label">Quick topics:</span>
+                        <button class="tag-pill" data-target="explainTopic">Neural Networks</button>
+                        <button class="tag-pill" data-target="explainTopic">Object-Oriented Programming</button>
+                        <button class="tag-pill" data-target="explainTopic">Quantum Entanglement</button>
+                        <button class="tag-pill" data-target="explainTopic">Supply and Demand</button>
+                    </div>
+                    <!-- Output area -->
+                    <div id="explainOutput" class="result-box" style="display: none;">
+                        <div class="result-header">
+                            <span class="result-title">📖 Explanation Summary</span>
+                            <button class="btn-copy" onclick="copyToClipboard('explainContent')">📋 Copy</button>
+                        </div>
+                        <div id="explainContent" class="markdown-body"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Notes Generator -->
+        <section id="tab-notes" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <span class="panel-icon">📝</span>
+                        <div>
+                            <h2>AI Notes Generator</h2>
+                            <p class="subtitle">Create structured, high-yield study notes with definitions, key terms, and revision tips.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label for="notesTopic" class="input-label">Enter topic for revision notes:</label>
+                    <div class="input-group">
+                        <input type="text" id="notesTopic" placeholder="e.g. Operating System Deadlocks, Organic Chemistry Aldehydes..." />
+                        <button id="notesBtn" class="btn btn-primary">
+                            <span class="btn-text">Generate Notes</span>
+                            <span class="spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                    <div class="quick-tags">
+                        <span class="tag-label">Try:</span>
+                        <button class="tag-pill" data-target="notesTopic">Database Normalization</button>
+                        <button class="tag-pill" data-target="notesTopic">TCP/IP 4-Layer Model</button>
+                        <button class="tag-pill" data-target="notesTopic">Time Complexity & Big-O</button>
+                    </div>
+                    <div id="notesOutput" class="result-box" style="display: none;">
+                        <div class="result-header">
+                            <span class="result-title">📑 Structured Study Notes</span>
+                            <button class="btn-copy" onclick="copyToClipboard('notesContent')">📋 Copy</button>
+                        </div>
+                        <div id="notesContent" class="markdown-body"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Quiz Generator -->
+        <section id="tab-quiz" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <span class="panel-icon">🎯</span>
+                        <div>
+                            <h2>Interactive AI Quiz</h2>
+                            <p class="subtitle">Test your retention with instant 5-question multiple-choice quizzes and real-time scoring.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label for="quizTopic" class="input-label">Topic for quiz:</label>
+                    <div class="input-group">
+                        <input type="text" id="quizTopic" placeholder="e.g. Python Data Structures, Microeconomics, World War II..." />
+                        <button id="quizBtn" class="btn btn-primary">
+                            <span class="btn-text">Generate Quiz</span>
+                            <span class="spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                    <div class="quick-tags">
+                        <span class="tag-label">Sample Quizzes:</span>
+                        <button class="tag-pill" data-target="quizTopic">Python Lists & Dictionaries</button>
+                        <button class="tag-pill" data-target="quizTopic">Supervised Learning Algorithms</button>
+                        <button class="tag-pill" data-target="quizTopic">SQL Queries</button>
+                    </div>
+
+                    <!-- Quiz container -->
+                    <div id="quizContainer" class="quiz-wrapper" style="display: none;">
+                        <div class="quiz-status-bar">
+                            <span id="quizScoreBadge" class="score-badge">Answer all 5 questions below</span>
+                            <button id="resetQuizBtn" class="btn btn-secondary btn-sm" style="display: none;">🔄 Try Another Quiz</button>
+                        </div>
+                        <div id="quizQuestionsList" class="questions-list"></div>
+                        <div class="quiz-actions" id="quizActions">
+                            <button id="submitQuizBtn" class="btn btn-success">Submit Answers & Calculate Score</button>
+                        </div>
+                        <div id="quizScoreResult" class="score-card" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Coding Assistant -->
+        <section id="tab-coding" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <span class="panel-icon">💻</span>
+                        <div>
+                            <h2>AI Coding Assistant</h2>
+                            <p class="subtitle">Diagnose bugs, understand runtime errors, or get clear code implementations with explanations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label for="codeInput" class="input-label">Enter programming query, code snippet, or error traceback:</label>
+                    <textarea id="codeInput" rows="5" placeholder="e.g. How do I reverse a linked list in Python? Or paste your code snippet / IndexError traceback here..."></textarea>
+                    <div class="action-row">
+                        <button id="codeBtn" class="btn btn-primary">
+                            <span class="btn-text">Get Coding Help</span>
+                            <span class="spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                    <div class="quick-tags">
+                        <span class="tag-label">Sample prompts:</span>
+                        <button class="tag-pill" data-target="codeInput">Explain recursion with a simple Python fibonacci example</button>
+                        <button class="tag-pill" data-target="codeInput">How to fix 'TypeError: list indices must be integers or slices'</button>
+                        <button class="tag-pill" data-target="codeInput">Difference between shallow copy and deep copy in Python</button>
+                    </div>
+                    <div id="codeOutput" class="result-box" style="display: none;">
+                        <div class="result-header">
+                            <span class="result-title">🛠️ Mentor Guidance & Solution</span>
+                            <button class="btn-copy" onclick="copyToClipboard('codeContent')">📋 Copy</button>
+                        </div>
+                        <div id="codeContent" class="markdown-body"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Built with ❤️ using <strong>Python Flask</strong> &amp; <strong>Google Gemini API</strong> for academic excellence.</p>
+        <p class="footer-sub">Designed for Students, Developers, and Lifelong Learners.</p>
+    </footer>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

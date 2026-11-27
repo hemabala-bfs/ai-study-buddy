@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Buddy V2.0 — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+    <!-- ===== TOP NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/dashboard" class="navbar-brand">
+                <span class="brand-icon">🎓</span>
+                <span class="brand-text">AI Study Buddy <span class="brand-version">V2.0</span></span>
+                <span class="badge badge-ml">ML Powered</span>
+            </a>
+
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="/" class="nav-link">Study Tools</a></li>
+                <li><a href="#analytics" class="nav-link">Analytics</a></li>
+                <li><a href="#study-plan" class="nav-link">Study Plan</a></li>
+                <li><a href="#resources" class="nav-link">Resources</a></li>
+            </ul>
+
+            <div class="api-status" id="apiStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">Checking API...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="dashboard-main">
+
+        <!-- ===== DASHBOARD OVERVIEW ===== -->
+        <section class="dashboard-section" id="overview">
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <h1 class="welcome-title">Welcome back, Student! 📚</h1>
+                    <p class="welcome-subtitle">Your personalized learning journey continues. Here's how you're progressing across all your study sessions.</p>
+                </div>
+                <div class="welcome-decoration" aria-hidden="true">
+                    <span class="decoration-emoji">🚀</span>
+                </div>
+            </div>
+
+            <div class="dashboard-grid stats-grid">
+                <!-- Total Quizzes -->
+                <div class="stat-card" id="stat-quizzes">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Quizzes</span>
+                        <span class="stat-value skeleton-text" data-stat="quizzes">—</span>
+                    </div>
+                    <div class="stat-trend">
+                        <span class="trend-arrow trend-up">↑</span>
+                    </div>
+                </div>
+
+                <!-- Study Hours -->
+                <div class="stat-card" id="stat-hours">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Study Hours</span>
+                        <span class="stat-value skeleton-text" data-stat="hours">—</span>
+                    </div>
+                    <div class="stat-trend">
+                        <span class="trend-arrow trend-up">↑</span>
+                    </div>
+                </div>
+
+                <!-- Day Streak -->
+                <div class="stat-card" id="stat-streak">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Day Streak</span>
+                        <span class="stat-value skeleton-text" data-stat="streak">—</span>
+                    </div>
+                    <div class="stat-trend">
+                        <span class="trend-arrow trend-up">↑</span>
+                    </div>
+                </div>
+
+                <!-- Avg Score -->
+                <div class="stat-card" id="stat-avg-score">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Avg Score</span>
+                        <span class="stat-value skeleton-text" data-stat="avg-score">—%</span>
+                    </div>
+                    <div class="stat-trend">
+                        <span class="trend-arrow trend-up">↑</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PERFORMANCE ANALYTICS ===== -->
+        <section class="dashboard-section" id="analytics">
+            <div class="section-header">
+                <h2 class="section-title">📈 Performance Analytics</h2>
+                <p class="section-subtitle">Deep dive into your study performance and learning patterns.</p>
+            </div>
+
+            <div class="dashboard-grid charts-grid">
+                <!-- Topic Performance Chart -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Topic Performance</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="topicChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Learning Progress Chart -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Learning Progress</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid analytics-details-grid">
+                <!-- Feature Usage Chart -->
+                <div class="chart-container chart-container-small">
+                    <h3 class="chart-title">Feature Usage</h3>
+                    <div class="chart-wrapper chart-wrapper-doughnut">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Strengths & Weaknesses Panel -->
+                <div class="strengths-weaknesses-panel">
+                    <h3 class="chart-title">Strengths &amp; Weaknesses</h3>
+
+                    <div class="sw-section">
+                        <h4 class="sw-heading sw-heading-strengths">💪 Strengths</h4>
+                        <div class="sw-badges" id="strengths-list">
+                            <span class="topic-badge topic-badge-strength skeleton-badge">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="sw-section">
+                        <h4 class="sw-heading sw-heading-weaknesses">🎯 Areas to Improve</h4>
+                        <div class="sw-badges" id="weaknesses-list">
+                            <span class="topic-badge topic-badge-weakness skeleton-badge">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SMART STUDY PLAN ===== -->
+        <section class="dashboard-section" id="study-plan">
+            <div class="section-header">
+                <h2 class="section-title">🗓️ Smart Study Plan</h2>
+                <p class="section-subtitle">AI-generated study schedule based on your performance and goals.</p>
+            </div>
+
+            <div class="study-plan-controls">
+                <button class="btn btn-primary btn-generate" id="generatePlanBtn">
+                    <span class="btn-icon">✨</span>
+                    Generate My Study Plan
+                </button>
+            </div>
+
+            <div class="study-plan-display" id="studyPlanContent">
+                <div class="plan-placeholder">
+                    <div class="plan-placeholder-icon">📋</div>
+                    <p class="plan-placeholder-text">Click "Generate My Study Plan" to get a personalized day-by-day study schedule powered by AI.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== AI RESOURCE RECOMMENDATIONS ===== -->
+        <section class="dashboard-section" id="resources">
+            <div class="section-header">
+                <h2 class="section-title">📖 AI Resource Recommendations</h2>
+                <p class="section-subtitle">Discover curated learning resources tailored to your needs.</p>
+            </div>
+
+            <div class="resource-controls">
+                <div class="resource-search-group">
+                    <input
+                        type="text"
+                        id="resourceSearchInput"
+                        class="input-field resource-search-input"
+                        placeholder="Search for learning resources (e.g., 'machine learning', 'data structures')..."
+                    >
+                    <button class="btn btn-primary" id="searchResourcesBtn">
+                        <span class="btn-icon">🔍</span>
+                        Search
+                    </button>
+                </div>
+
+                <div class="resource-filters">
+                    <select id="categoryFilter" class="input-field select-field">
+                        <option value="">All Categories</option>
+                        <option value="programming">Programming</option>
+                        <option value="data_science">Data Science</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="web_development">Web Development</option>
+                        <option value="machine_learning">Machine Learning</option>
+                        <option value="algorithms">Algorithms</option>
+                        <option value="databases">Databases</option>
+                        <option value="networking">Networking</option>
+                    </select>
+
+                    <select id="difficultyFilter" class="input-field select-field">
+                        <option value="">All Difficulties</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dashboard-grid resource-grid" id="resourceResults">
+                <div class="resource-placeholder">
+                    <div class="resource-placeholder-icon">🔎</div>
+                    <p class="resource-placeholder-text">Search for a topic to discover AI-recommended learning resources.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ADAPTIVE QUIZ ===== -->
+        <section class="dashboard-section" id="adaptive-quiz">
+            <div class="section-header">
+                <h2 class="section-title">🧠 Adaptive Quiz</h2>
+                <p class="section-subtitle">ML-powered quizzes that adapt to your skill level in real time.</p>
+            </div>
+
+            <div class="adaptive-quiz-controls">
+                <div class="quiz-input-group">
+                    <input
+                        type="text"
+                        id="adaptiveQuizTopic"
+                        class="input-field quiz-topic-input"
+                        placeholder="Enter a topic (e.g., 'Python functions', 'binary search')..."
+                    >
+                    <button class="btn btn-primary" id="startAdaptiveQuizBtn">
+                        <span class="btn-icon">🚀</span>
+                        Start Quiz
+                    </button>
+                </div>
+                <div class="quiz-difficulty-indicator">
+                    <span class="difficulty-label">Current Difficulty:</span>
+                    <span class="badge badge-difficulty" id="quizDifficultyBadge">Not Started</span>
+                </div>
+            </div>
+
+            <div class="adaptive-quiz-area" id="adaptiveQuizContent">
+                <div class="quiz-placeholder">
+                    <div class="quiz-placeholder-icon">❓</div>
+                    <p class="quiz-placeholder-text">Enter a topic above and start the adaptive quiz. Questions will adjust based on your answers.</p>
+                </div>
+            </div>
+
+            <div class="quiz-submit-area">
+                <button class="btn btn-success btn-submit-quiz" id="submitAdaptiveQuizBtn" disabled>
+                    <span class="btn-icon">✅</span>
+                    Submit Answers
+                </button>
+            </div>
+
+            <div class="adaptive-quiz-results" id="adaptiveQuizResults"></div>
+
+            <!-- Quiz History -->
+            <div class="quiz-history-section">
+                <h3 class="chart-title">📜 Quiz History</h3>
+                <div class="table-responsive">
+                    <table class="data-table" id="quizHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Topic</th>
+                                <th>Score</th>
+                                <th>Difficulty</th>
+                                <th>Questions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-placeholder-row">
+                                <td colspan="5" class="table-placeholder-cell">No quiz history yet. Start a quiz above!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ML MODEL INFO ===== -->
+        <section class="dashboard-section" id="model-info">
+            <div class="section-header">
+                <h2 class="section-title">🤖 ML Model Information</h2>
+                <p class="section-subtitle">Details about the machine learning models powering your study experience.</p>
+            </div>
+
+            <div class="model-info-controls">
+                <button class="btn btn-secondary" id="showModelInfoBtn">
+                    <span class="btn-icon">🔬</span>
+                    View ML Model Details
+                </button>
+            </div>
+
+            <div class="model-info-panel collapsed" id="modelInfoPanel">
+                <div class="model-info-grid">
+                    <!-- Model Type -->
+                    <div class="model-detail-card">
+                        <h4 class="model-detail-title">Model Type</h4>
+                        <p class="model-detail-value" id="modelType">
+                            <span class="skeleton-text">Loading...</span>
+                        </p>
+                    </div>
+
+                    <!-- Features Used -->
+                    <div class="model-detail-card">
+                        <h4 class="model-detail-title">Features</h4>
+                        <div class="model-detail-value" id="modelFeatures">
+                            <span class="skeleton-text">Loading...</span>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Metrics -->
+                    <div class="model-detail-card model-detail-card-wide">
+                        <h4 class="model-detail-title">Evaluation Metrics</h4>
+                        <div class="model-metrics" id="modelMetrics">
+                            <span class="skeleton-text">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== QUICK ACCESS STUDY TOOLS ===== -->
+        <section class="dashboard-section" id="study-tools">
+            <div class="section-header">
+                <h2 class="section-title">⚡ Quick Access — Study Tools</h2>
+                <p class="section-subtitle">Jump straight into your favorite study tools.</p>
+            </div>
+
+            <div class="dashboard-grid tools-grid">
+                <a href="/" class="tool-card">
+                    <div class="tool-card-icon">💡</div>
+                    <h3 class="tool-card-title">Concept Explainer</h3>
+                    <p class="tool-card-desc">Get clear, AI-powered explanations of complex topics.</p>
+                </a>
+
+                <a href="/" class="tool-card">
+                    <div class="tool-card-icon">📝</div>
+                    <h3 class="tool-card-title">Notes Generator</h3>
+                    <p class="tool-card-desc">Generate structured study notes from any subject.</p>
+                </a>
+
+                <a href="/" class="tool-card">
+                    <div class="tool-card-icon">❓</div>
+                    <h3 class="tool-card-title">Quiz Generator</h3>
+                    <p class="tool-card-desc">Create practice quizzes to test your knowledge.</p>
+                </a>
+
+                <a href="/" class="tool-card">
+                    <div class="tool-card-icon">💻</div>
+                    <h3 class="tool-card-title">Coding Assistant</h3>
+                    <p class="tool-card-desc">Get help with code, debugging, and programming concepts.</p>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="dashboard-footer">
+        <div class="footer-container">
+            <p class="footer-text">AI Study Buddy V2.0 — Built with Python, Flask, Scikit-learn, Chart.js &amp; Google Gemini</p>
+            <p class="footer-credit">Module 6 Final Project | &copy; 2026</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

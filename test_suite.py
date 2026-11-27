@@ -50,22 +50,25 @@ class TestAIStudyBuddy(unittest.TestCase):
 
     def test_endpoints_without_api_key(self):
         """Test that missing API keys return friendly 503 error feedback without crashing."""
-        # If API key is not present or default dummy
-        endpoints = [
-            ("/explain", {"topic": "Photosynthesis"}),
-            ("/notes", {"topic": "Object Oriented Programming"}),
-            ("/quiz", {"topic": "Python"}),
-            ("/code", {"query": "Explain recursion"}),
-        ]
-        for url, payload in endpoints:
-            resp = self.client.post(url, json=payload)
-            # Either 200 (if live API key configured) or 503 (if missing key)
-            self.assertIn(resp.status_code, [200, 503])
-            data = resp.get_json()
-            if resp.status_code == 503:
+        orig_key = os.environ.get("GEMINI_API_KEY")
+        try:
+            os.environ["GEMINI_API_KEY"] = ""
+            endpoints = [
+                ("/explain", {"topic": "Photosynthesis"}),
+                ("/notes", {"topic": "Object Oriented Programming"}),
+                ("/quiz", {"topic": "Python"}),
+                ("/code", {"query": "Explain recursion"}),
+            ]
+            for url, payload in endpoints:
+                resp = self.client.post(url, json=payload)
+                self.assertEqual(resp.status_code, 503)
+                data = resp.get_json()
                 self.assertIn("error", data)
                 self.assertIn("GEMINI_API_KEY", data["error"])
-        print("✓ test_endpoints_without_api_key: PASSED (Endpoints handle unconfigured API keys cleanly)")
+            print("✓ test_endpoints_without_api_key: PASSED (Endpoints handle unconfigured API keys cleanly)")
+        finally:
+            if orig_key is not None:
+                os.environ["GEMINI_API_KEY"] = orig_key
 
 if __name__ == "__main__":
     unittest.main()
